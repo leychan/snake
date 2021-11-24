@@ -1,10 +1,11 @@
 <?php
 
-namespace snake;
+require __DIR__ . '/../vendor/autoload.php';
 
-require __DIR__ . '/Snake.php';
+use \snake\Snake;
 
 $snake = new Snake();
+$snake->setDrawerLength(20);
 $snake->init();
 $snake->draw();
 

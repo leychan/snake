@@ -4,12 +4,40 @@ namespace snake;
 
 class Snake
 {
+    /**
+     * @var array 整个画布
+     */
     private array $drawer = [];
+
+    /**
+     * @var array 蛇头部的坐标
+     */
     private array $head = [];
+
+    /**
+     * @var string 蛇的移动方向
+     */
     private string $direct = '';
+
+    /**
+     * @var array 蛇身体的坐标
+     */
     private array $body = [];
+
+    /**
+     * @var array 食物的坐标
+     */
     private array $food = [];
+
+    /**
+     * @var int 蛇移动速度
+     */
     private int $frequency = 0;
+
+    /**
+     * @var int 画布长宽
+     */
+    private int $length = self::LEN;
 
     const MAX_FREQUENCY = 900000;
     const MIN_FREQUENCY = 300000;
@@ -24,27 +52,63 @@ class Snake
 
     const QUIT_KEY = 'q';
 
+    /**
+     * 蛇头部图标
+     */
     const HEAD_ICON = '♥ ';
+
+    /**
+     * 蛇身体坐标
+     */
     const BODY_ICON = '◎ ';
+
+    /**
+     * 食物图标
+     */
     const FOOD_ICON = '● ';
 
 
     public function __construct() {
-        for ($i = 0; $i < self::LEN; $i++) {
-            $this->drawer[$i] = array_fill(0, self::LEN, 0);
-        }
+
     }
 
+    /**
+     * @desc 初始化画布/蛇头(起点)/食物/方向
+     * @user chenlei11
+     * @date 2021/11/24
+     */
     public function init() {
-        $random_x = mt_rand(0, self::LEN - 1);
-        $random_y = mt_rand(0, self::LEN - 1);
+
+        //画布
+        $this->initDrawer();
+
+        $random_x = mt_rand(0, $this->length - 1);
+        $random_y = mt_rand(0, $this->length - 1);
 
         //这是蛇的起始点
         $this->drawer[$random_x][$random_y] = 1;
         $this->head = [$random_x, $random_y];
         $this->body[] = $this->head;
+        //食物
         $this->randomFoods();
+        //方向
         $this->direct = $this->initDirect();
+    }
+
+    /**
+     * @desc 生成画布
+     * @user chenlei11
+     * @date 2021/11/24
+     */
+    private function initDrawer() {
+        //生成画布
+        for ($i = 0; $i < $this->length; $i++) {
+            $this->drawer[$i] = array_fill(0, $this->length, 0);
+        }
+    }
+
+    public function setDrawerLength(int $len) {
+        $this->length = $len;
     }
 
     private function initDirect() {
@@ -72,25 +136,53 @@ class Snake
         return $direct;
     }
 
+    /**
+     * @desc 刷新贪吃蛇移动速度
+     * @user chenlei11
+     * @date 2021/11/24
+     */
     public function refreshFrequency() {
         if ($this->frequency <= self::MIN_FREQUENCY) {
             $this->frequency = self::MIN_FREQUENCY;
         }
-        $this->frequency = self::MAX_FREQUENCY - (10000 * count($this->body));
+        $this->frequency = self::MAX_FREQUENCY - (40000 * count($this->body));
     }
 
+    /**
+     * @desc 设置蛇移动的放向
+     * @user chenlei11
+     * @date 2021/11/24
+     * @param string $direct
+     */
     public function setDirect(string $direct) {
         $this->direct = $direct;
     }
 
+    /**
+     * @desc 设置蛇的移动的速度
+     * @user chenlei11
+     * @date 2021/11/24
+     * @param int $frequency
+     */
     public function setFrequency(int $frequency) {
         $this->frequency = $frequency;
     }
 
+    /**
+     * @desc 获取当前蛇运行的速度
+     * @user chenlei11
+     * @date 2021/11/24
+     * @return int
+     */
     public function getFrequency() {
         return $this->frequency;
     }
 
+    /**
+     * @desc 移动蛇的身体
+     * @user chenlei11
+     * @date 2021/11/24
+     */
     public function runDirect() {
 
         switch ($this->direct) {
@@ -112,15 +204,20 @@ class Snake
                 break;
         }
 
+        //超出范围(撞墙),死了,退出
         if (!isset($this->drawer[$x][$y])) {
             $this->die();
         }
+        //新的头部
         $head = [$x, $y];
+        //如果新的头部,即蛇的下一步是自己的身体,则是吃自己,死了,退出
         if (in_array($head, $this->body)) {
             $this->die();
         }
+        //把新头部塞到身体的第一个位置
         array_unshift($this->body, $head);
         $this->head = $head;
+        //如果新头部不是食物,即只是移动,不增长身体,把身体最后一个元素弹出(模拟移动效果),否则是吃到了食物,生成食物
         if ($head != $this->food) {
             array_pop($this->body);
         } else {
@@ -128,9 +225,14 @@ class Snake
         }
     }
 
+    /**
+     * @desc 生成食物
+     * @user chenlei11
+     * @date 2021/11/24
+     */
     private function randomFoods() {
         $blank = [];
-        $len = self::LEN;
+        $len = $this->length;
         for ($i = 0; $i < $len; $i++) {
             for ($j = 0; $j < $len; $j++) {
                 if ([$i, $j] == $this->head) {
@@ -149,9 +251,14 @@ class Snake
         $this->food = [$rand_x, $rand_y];
     }
 
+    /**
+     * @desc 刷新整个画布
+     * @user chenlei11
+     * @date 2021/11/24
+     */
     public function draw() {
         system("clear");
-        $len = self::LEN;
+        $len = $this->length;
         for ($i = 0; $i < $len; $i++) {
             for ($j = 0; $j < $len; $j++) {
                 if ([$i, $j] == $this->head) {
@@ -172,7 +279,12 @@ class Snake
         }
     }
 
+    /**
+     * @desc 死了
+     * @user chenlei11
+     * @date 2021/11/24
+     */
     private function die() {
-        echo 'you die >_<';exit;
+        echo 'you die >_<, best wish for next challenge';exit;
     }
 }
