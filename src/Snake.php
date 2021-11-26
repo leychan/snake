@@ -39,8 +39,15 @@ class Snake
      */
     private int $length = self::LEN;
 
-    const MAX_FREQUENCY = 900000;
-    const MIN_FREQUENCY = 300000;
+    /**
+     * @var string 死亡提示
+     */
+    private string $tip = 'you died >_<';
+
+    const BEST_WISHES = 'best wishes for next challenge';
+
+    const MAX_FREQUENCY = 700000;
+    const MIN_FREQUENCY = 80000;
     const LEN = 10;
 
     const KEYMAP = [
@@ -55,7 +62,12 @@ class Snake
     /**
      * 蛇头部图标
      */
-    const HEAD_ICON = '♥ ';
+    const HEAD_ICON = [
+        'up' => '▲ ',
+        'down' => '▼ ',
+        'left' => '◄ ',
+        'right' => '► '
+    ];
 
     /**
      * 蛇身体坐标
@@ -93,6 +105,8 @@ class Snake
         $this->randomFoods();
         //方向
         $this->direct = $this->initDirect();
+        //设置初始移动速度
+        $this->setFrequency(self::MAX_FREQUENCY);
     }
 
     /**
@@ -143,9 +157,9 @@ class Snake
      */
     public function refreshFrequency() {
         if ($this->frequency <= self::MIN_FREQUENCY) {
-            $this->frequency = self::MIN_FREQUENCY;
+            return self::MIN_FREQUENCY;
         }
-        $this->frequency = self::MAX_FREQUENCY - (40000 * count($this->body));
+        $this->frequency = self::MAX_FREQUENCY - (25000 * count($this->body));
     }
 
     /**
@@ -206,12 +220,14 @@ class Snake
 
         //超出范围(撞墙),死了,退出
         if (!isset($this->drawer[$x][$y])) {
+            $this->tip = 'crush wall, died!';
             $this->die();
         }
         //新的头部
         $head = [$x, $y];
         //如果新的头部,即蛇的下一步是自己的身体,则是吃自己,死了,退出
         if (in_array($head, $this->body)) {
+            $this->tip = 'eat self, died!';
             $this->die();
         }
         //把新头部塞到身体的第一个位置
@@ -262,7 +278,7 @@ class Snake
         for ($i = 0; $i < $len; $i++) {
             for ($j = 0; $j < $len; $j++) {
                 if ([$i, $j] == $this->head) {
-                    echo self::HEAD_ICON;
+                    echo self::HEAD_ICON[$this->direct];
                     continue;
                 }
                 if (in_array([$i, $j], $this->body)) {
@@ -285,6 +301,6 @@ class Snake
      * @date 2021/11/24
      */
     private function die() {
-        echo 'you die >_<, best wish for next challenge';exit;
+        echo $this->tip, PHP_EOL, self::BEST_WISHES, PHP_EOL, '当前速度:' . ($this->frequency / 1000) . 'ms';exit;
     }
 }
