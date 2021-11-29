@@ -1,6 +1,8 @@
 # 背景
 贪吃蛇小游戏
 
+![img.png](img.png)
+
 # 安装
 composer require leychan/snake
 
