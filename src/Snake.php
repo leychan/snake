@@ -59,7 +59,7 @@ s => down
 a => left
 d => right
 
-triangle is snake's head and the round is food, have joy!
+triangle is snake's head and the round is food, have fun!
 
 TIP;
 
