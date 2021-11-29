@@ -44,7 +44,24 @@ class Snake
      */
     private string $tip = 'you died >_<';
 
+    /**
+     * @var bool 是否生成画布
+     */
+    private $draw = false;
+
     const BEST_WISHES = 'best wishes for next challenge';
+
+    const WELCOME_TIP = <<<TIP
+
+play this game by keys:
+w => up
+s => down
+a => left
+d => right
+
+triangle is snake's head and the round is food, have joy!
+
+TIP;
 
     const MAX_FREQUENCY = 700000;
     const MIN_FREQUENCY = 80000;
@@ -81,7 +98,8 @@ class Snake
 
 
     public function __construct() {
-
+        $this->clear();
+        echo self::WELCOME_TIP, PHP_EOL;
     }
 
     /**
@@ -273,10 +291,11 @@ class Snake
      * @date 2021/11/24
      */
     public function draw() {
-        system("clear");
-        $len = $this->length;
-        for ($i = 0; $i < $len; $i++) {
-            for ($j = 0; $j < $len; $j++) {
+        if ($this->draw) {
+            $this->clearDrawer();
+        }
+        for ($i = 0; $i < $this->length; $i++) {
+            for ($j = 0; $j < $this->length; $j++) {
                 if ([$i, $j] == $this->head) {
                     echo self::HEAD_ICON[$this->direct];
                     continue;
@@ -293,6 +312,7 @@ class Snake
             }
             echo PHP_EOL;
         }
+        $this->draw = true;
     }
 
     /**
@@ -301,6 +321,24 @@ class Snake
      * @date 2021/11/24
      */
     private function die() {
-        echo $this->tip, PHP_EOL, self::BEST_WISHES, PHP_EOL, '当前速度:' . ($this->frequency / 1000) . 'ms';exit;
+        echo $this->tip, PHP_EOL, self::BEST_WISHES, PHP_EOL, 'current speed:' . ($this->frequency / 1000) . 'ms';exit;
+    }
+
+    /**
+     * @desc 清空画布
+     * @user chenlei11
+     * @date 2021/11/29
+     */
+    private function clear() {
+        system('clear');
+    }
+
+    /**
+     * @desc 清空画布
+     * @user chenlei11
+     * @date 2021/11/29
+     */
+    private function clearDrawer() {
+        system("tput cuu {$this->length}");
     }
 }
