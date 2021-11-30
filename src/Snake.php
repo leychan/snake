@@ -44,6 +44,8 @@ class Snake
      */
     private string $tip = 'you died >_<';
 
+    private string $body_str = '';
+
     /**
      * @var bool 是否生成画布
      */
@@ -53,17 +55,17 @@ class Snake
 
     const WELCOME_TIP = <<<TIP
 
-play this game by keys:
-w => up
-s => down
-a => left
-d => right
+        play this game by keys:
+        w => up
+        s => down
+        a => left
+        d => right
+        
+        triangle is snake's head and the round is food, have fun!
 
-triangle is snake's head and the round is food, have fun!
+        TIP;
 
-TIP;
-
-    const MAX_FREQUENCY = 700000;
+    const MAX_FREQUENCY = 600000;
     const MIN_FREQUENCY = 80000;
     const LEN = 10;
 
@@ -177,7 +179,7 @@ TIP;
         if ($this->frequency <= self::MIN_FREQUENCY) {
             return self::MIN_FREQUENCY;
         }
-        $this->frequency = self::MAX_FREQUENCY - (25000 * count($this->body));
+        $this->frequency = self::MAX_FREQUENCY - (22000 * count($this->body));
     }
 
     /**
@@ -301,6 +303,12 @@ TIP;
                     continue;
                 }
                 if (in_array([$i, $j], $this->body)) {
+                    if (!empty($this->body_str) && count($this->body) > strlen($this->body_str)) {
+                        $key = array_search([$i, $j], $this->body);
+                        $icon = substr($this->body_str, $key - 1, 1) ?: self::BODY_ICON;
+                        echo strlen($icon) == 1 ? "$icon " : $icon;
+                        continue;
+                    }
                     echo self::BODY_ICON;
                     continue;
                 }
@@ -340,5 +348,15 @@ TIP;
      */
     private function clearDrawer() {
         system("tput cuu {$this->length}");
+    }
+
+    /**
+     * @desc 设置特殊字符
+     * @user chenlei11
+     * @date 2021/11/30
+     * @param string $str
+     */
+    public function setBodyStr(string $str) {
+        $this->body_str = $str;
     }
 }
