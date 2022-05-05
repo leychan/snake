@@ -82,21 +82,21 @@ class Snake
      * 蛇头部图标
      */
     const HEAD_ICON = [
-        'up' => '▲ ',
-        'down' => '▼ ',
-        'left' => '◄ ',
-        'right' => '► '
+        'up' => '^ ',
+        'down' => '| ',
+        'left' => '< ',
+        'right' => '> '
     ];
 
     /**
      * 蛇身体坐标
      */
-    const BODY_ICON = '◎ ';
+    const BODY_ICON = '+ ';
 
     /**
      * 食物图标
      */
-    const FOOD_ICON = '● ';
+    const FOOD_ICON = '* ';
 
 
     public function __construct() {
@@ -109,7 +109,7 @@ class Snake
      * @user chenlei11
      * @date 2021/11/24
      */
-    public function init() {
+    public function init(): void {
 
         //画布
         $this->initDrawer();
@@ -134,14 +134,14 @@ class Snake
      * @user chenlei11
      * @date 2021/11/24
      */
-    private function initDrawer() {
+    private function initDrawer(): void {
         //生成画布
         for ($i = 0; $i < $this->length; $i++) {
             $this->drawer[$i] = array_fill(0, $this->length, 0);
         }
     }
 
-    public function setDrawerLength(int $len) {
+    public function setDrawerLength(int $len): void {
         $this->length = $len;
     }
 
@@ -175,9 +175,10 @@ class Snake
      * @user chenlei11
      * @date 2021/11/24
      */
-    public function refreshFrequency() {
+    public function refreshFrequency(): void {
         if ($this->frequency <= self::MIN_FREQUENCY) {
-            return self::MIN_FREQUENCY;
+            $this->frequency = self::MIN_FREQUENCY;
+            return;
         }
         $this->frequency = self::MAX_FREQUENCY - (22000 * count($this->body));
     }
@@ -188,7 +189,7 @@ class Snake
      * @date 2021/11/24
      * @param string $direct
      */
-    public function setDirect(string $direct) {
+    public function setDirect(string $direct): void {
         $this->direct = $direct;
     }
 
@@ -198,7 +199,7 @@ class Snake
      * @date 2021/11/24
      * @param int $frequency
      */
-    public function setFrequency(int $frequency) {
+    public function setFrequency(int $frequency): void {
         $this->frequency = $frequency;
     }
 
@@ -208,7 +209,7 @@ class Snake
      * @date 2021/11/24
      * @return int
      */
-    public function getFrequency() {
+    public function getFrequency(): int {
         return $this->frequency;
     }
 
@@ -217,7 +218,7 @@ class Snake
      * @user chenlei11
      * @date 2021/11/24
      */
-    public function runDirect() {
+    public function runDirect(): void {
 
         switch ($this->direct) {
             case 'up':
@@ -266,7 +267,7 @@ class Snake
      * @user chenlei11
      * @date 2021/11/24
      */
-    private function randomFoods() {
+    private function randomFoods(): void {
         $blank = [];
         $len = $this->length;
         for ($i = 0; $i < $len; $i++) {
@@ -292,7 +293,7 @@ class Snake
      * @user chenlei11
      * @date 2021/11/24
      */
-    public function draw() {
+    public function draw(): void {
         if ($this->draw) {
             $this->clearDrawer();
         }
@@ -328,7 +329,7 @@ class Snake
      * @user chenlei11
      * @date 2021/11/24
      */
-    private function die() {
+    private function die(): void {
         echo $this->tip, PHP_EOL, self::BEST_WISHES, PHP_EOL, 'current speed:' . ($this->frequency / 1000) . 'ms';exit;
     }
 
@@ -337,7 +338,7 @@ class Snake
      * @user chenlei11
      * @date 2021/11/29
      */
-    private function clear() {
+    private function clear(): void {
         system('clear');
     }
 
@@ -346,7 +347,7 @@ class Snake
      * @user chenlei11
      * @date 2021/11/29
      */
-    private function clearDrawer() {
+    private function clearDrawer(): void {
         system("tput cuu {$this->length}");
     }
 
@@ -356,7 +357,7 @@ class Snake
      * @date 2021/11/30
      * @param string $str
      */
-    public function setBodyStr(string $str) {
+    public function setBodyStr(string $str): void {
         $this->body_str = $str;
     }
 }
